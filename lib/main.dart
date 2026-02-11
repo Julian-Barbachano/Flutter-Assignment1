@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.white,
           centerTitle: true,
           foregroundColor: Colors.white,
-        )
+        ),
       ),
       home: const MyHomePage(title: 'Random Number Generator'),
     );
@@ -34,8 +35,22 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  
+class _MyHomePageState extends State<MyHomePage> {  
+
+  //Elevated Button Theme template
+  final ButtonStyle _elevatedButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: Color(0xFF147CD3),
+    foregroundColor: Colors.white, 
+    minimumSize: const Size(double.infinity, 60),
+    textStyle: const TextStyle(fontSize: 18),
+    shape: BeveledRectangleBorder(
+      borderRadius: BorderRadius.zero
+    ) 
+  );
+
+
+  int? randomNumber;
+  final Random _random = Random(); //Random number generator setup assisted by ChatGPT
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +61,34 @@ class _MyHomePageState extends State<MyHomePage> {
    
         backgroundColor: Color(0xFF147CD3),
 
-        leading: Icon(
-          Icons.home,
+        leading: IconButton(
+          icon: const Icon(Icons.home),
           color: Colors.white,
+          onPressed: null,
         ),
   
         title: Text(widget.title),
       ),
-      bottomNavigationBar: Padding(
+
+      body: SafeArea(
+      child: Center(
+        child: Text(
+          randomNumber == null ? "" : randomNumber.toString(), //Ternary Operator used to show nothing on startup/reset of program and prevent crash
+          //Assisted with ChatGPT
+
+          style: const TextStyle(
+            fontSize: 80,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+
+      ),
+    ),
+
+      bottomNavigationBar: SafeArea(
+        
+       child: Padding(
         padding: EdgeInsets.all(16),
         
         child: Column(
@@ -62,14 +97,12 @@ class _MyHomePageState extends State<MyHomePage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF147CD3),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-               ),
-              onPressed: () {},
+               style: _elevatedButtonStyle,
+              onPressed: () {
+                setState(() {
+                  randomNumber = _random.nextInt(9) + 1; //Format taken from Flutter Mentor on Youtube
+                });
+              },
 
               child: Text("Generate")
               ),
@@ -80,15 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF147CD3),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-                ),
-                
-                
+                style: _elevatedButtonStyle,
                 onPressed: () {
                 Navigator.pushNamed(context, '/stats');
               }, 
@@ -99,7 +124,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
 
       ),
-      
+    ),
+
     );
   }
 }
