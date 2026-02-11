@@ -1,6 +1,26 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+const kPrimaryColor = Color(0xFF147CD3);
+const kSecondaryColor = Color(0xFF2196F3);
+const kNumberTextStyle = TextStyle(
+  fontSize: 60,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
+
+final ButtonStyle elevatedButtonStyle = ElevatedButton.styleFrom(
+  backgroundColor: kPrimaryColor,
+  foregroundColor: Colors.white,
+  minimumSize: const Size(double.infinity, 60),
+
+  textStyle: const TextStyle(fontSize: 18),
+
+  shape: const BeveledRectangleBorder(
+    borderRadius: BorderRadius.zero,
+  ),
+);
+
 void main() {
   runApp(const MyApp());
 }
@@ -39,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //Elevated Button Theme template
   final ButtonStyle _elevatedButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: Color(0xFF147CD3),
+    backgroundColor: kPrimaryColor,
     foregroundColor: Colors.white, 
     minimumSize: const Size(double.infinity, 60),
     textStyle: const TextStyle(fontSize: 18),
@@ -56,10 +76,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: Color(0xFF2196F3),
+      backgroundColor: kSecondaryColor,
       appBar: AppBar(
    
-        backgroundColor: Color(0xFF147CD3),
+        backgroundColor: kPrimaryColor,
 
         leading: IconButton(
           icon: const Icon(Icons.home),
@@ -87,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
 
       bottomNavigationBar: SafeArea(
-        
+
        child: Padding(
         padding: EdgeInsets.all(16),
         
@@ -115,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ElevatedButton(
                 style: _elevatedButtonStyle,
                 onPressed: () {
-                Navigator.pushNamed(context, '/stats');
+                Navigator.push(context, MaterialPageRoute(builder: (context) => StatisticsPage(number: randomNumber, )));
               }, 
               child: Text("View Statistics"),
               ),
@@ -124,6 +144,70 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
 
       ),
+    ),
+
+    );
+  }
+}
+
+
+
+class StatisticsPage extends StatelessWidget {
+   
+  final int? number;
+  final title = 'Number List';
+
+  const StatisticsPage({super.key, this.number});
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      backgroundColor: kSecondaryColor,
+      appBar: AppBar(
+        backgroundColor: kPrimaryColor,
+        title: const Text("Statistics")),
+      
+      body: SafeArea(
+      child: Center(
+        child: Text(
+          "Last number: ${number ?? ''}",
+          style: const TextStyle(fontSize: 30)
+        ),
+      ),
+    ),
+
+    bottomNavigationBar: SafeArea(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: elevatedButtonStyle,
+                onPressed: null , 
+                child: Text("Reset") ),
+            ),
+
+            const SizedBox(height: 10),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: elevatedButtonStyle,
+                onPressed: () {
+                Navigator.pop(context);
+              }, 
+              child: Text("Back to Home"),
+              ),
+            )
+          ],
+
+        )
+
+      )
+    
     ),
 
     );
