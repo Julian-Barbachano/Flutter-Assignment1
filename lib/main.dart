@@ -20,6 +20,7 @@ final ButtonStyle elevatedButtonStyle = ElevatedButton.styleFrom(
     borderRadius: BorderRadius.zero,
   ),
 );
+//This is a global variable that can be applied to both Home Page and Statistics Page
 
 void main() {
   runApp(const MyApp());
@@ -67,7 +68,20 @@ class _MyHomePageState extends State<MyHomePage> {
       borderRadius: BorderRadius.zero
     ) 
   );
+  //Made a local variable for the button theme, only covers this page
 
+  Map<int, int> stats = {
+    for (int i = 1; i <= 9; i++) i:0
+  };
+  //Map variable made with assistance from GPT
+
+  void generateNumber() {
+    setState(() {
+      randomNumber = _random.nextInt(9) + 1;
+
+      stats[randomNumber!] = (stats[randomNumber!] ?? 0)+ 1; //Will update the map and display number of times a number was generated
+    });
+  }
 
   int? randomNumber;
   final Random _random = Random(); //Random number generator setup assisted by ChatGPT
@@ -76,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: kSecondaryColor,
+      backgroundColor: kSecondaryColor, 
       appBar: AppBar(
    
         backgroundColor: kPrimaryColor,
@@ -85,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
           icon: const Icon(Icons.home),
           color: Colors.white,
           onPressed: null,
-        ),
+        ), //Used a button instead of a Icon. Button appears grey since null
   
         title: Text(widget.title),
       ),
@@ -116,14 +130,9 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: ElevatedButton( //Generate a number button
                style: _elevatedButtonStyle,
-              onPressed: () {
-                setState(() {
-                  randomNumber = _random.nextInt(9) + 1; //Format taken from Flutter Mentor on Youtube
-                });
-              },
-
+              onPressed: generateNumber,
               child: Text("Generate")
               ),
             ),
@@ -132,10 +141,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: ElevatedButton( //View statistics button
                 style: _elevatedButtonStyle,
                 onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => StatisticsPage(number: randomNumber, )));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => StatisticsPage(stats: stats)));
               }, 
               child: Text("View Statistics"),
               ),
@@ -150,14 +159,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-
-
 class StatisticsPage extends StatelessWidget {
    
-  final int? number;
-  final title = 'Number List';
+  final Map<int, int> stats;
 
-  const StatisticsPage({super.key, this.number});
+  const StatisticsPage({super.key, required this.stats});
 
   @override
   Widget build(BuildContext context){
@@ -168,11 +174,29 @@ class StatisticsPage extends StatelessWidget {
         title: const Text("Statistics")),
       
       body: SafeArea(
-      child: Center(
-        child: Text(
-          "Last number: ${number ?? ''}",
-          style: const TextStyle(fontSize: 30)
-        ),
+      child: ListView(
+        children: stats.entries.map((entry) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8, horizontal: 20),
+
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+              children: [
+                Text(
+                  "Number ${entry.key}",
+                  style: const TextStyle(fontSize: 20),
+                ),
+
+                Text(
+                  "${entry.value} times",
+                  style: const TextStyle(fontSize: 20),
+                ),
+              ],
+              ),
+          );
+        }).toList(),
       ),
     ),
 
@@ -186,7 +210,7 @@ class StatisticsPage extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 style: elevatedButtonStyle,
-                onPressed: null , 
+                onPressed: null, 
                 child: Text("Reset") ),
             ),
 
@@ -203,13 +227,9 @@ class StatisticsPage extends StatelessWidget {
               ),
             )
           ],
-
         )
-
       )
-    
     ),
-
     );
   }
 }
